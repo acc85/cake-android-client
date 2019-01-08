@@ -1,23 +1,29 @@
 package com.waracle.androidtest;
 
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.ImageView;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import com.waracle.androidtest.DataSource.DataSource;
+import com.waracle.androidtest.DataSource.ImageSource;
+
 import java.security.InvalidParameterException;
 
 /**
  * Created by Riad on 20/05/2015.
  */
 public class ImageLoader {
-
-    private static final String TAG = ImageLoader.class.getSimpleName();
 
     public ImageLoader() { /**/ }
 
@@ -27,51 +33,48 @@ public class ImageLoader {
      * @param url       image url
      * @param imageView view to set image too.
      */
-    public void load(String url, ImageView imageView) {
+    public void load(final String url, final ImageView imageView) {
+
         if (TextUtils.isEmpty(url)) {
             throw new InvalidParameterException("URL is empty!");
         }
 
-        // Can you think of a way to improve loading of bitmaps
-        // that have already been loaded previously??
-
-        try {
-            setImageView(imageView, convertToBitmap(loadImageData(url)));
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
-
-    private static byte[] loadImageData(String url) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-        InputStream inputStream = null;
-        try {
-            try {
-                // Read data from workstation
-                inputStream = connection.getInputStream();
-            } catch (IOException e) {
-                // Read the error from the workstation
-                inputStream = connection.getErrorStream();
+        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+            @Override
+            public void run() {
+                MainApplication.getDataSource().addToMap(url,new ImageSource().setUrl(url),new DataSource.DataListeners<Bitmap>() {
+                    @Override
+                    public void onImageLoad(final Bitmap bitmap) {
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                setImageView(imageView, bitmap);
+                            }
+                        });
+                    }
+                });
             }
+        });
 
-            // Can you think of a way to make the entire
-            // HTTP more efficient using HTTP headers??
+    }
 
-            return StreamUtils.readUnknownFully(inputStream);
-        } finally {
-            // Close the input stream if it exists.
-            StreamUtils.close(inputStream);
-
-            // Disconnect the connection
-            connection.disconnect();
+    @Nullable
+    public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        Bitmap bitmap = null;
+        if (drawable != null) {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
         }
+
+        return bitmap;
     }
 
-    private static Bitmap convertToBitmap(byte[] data) {
-        return BitmapFactory.decodeByteArray(data, 0, data.length);
-    }
 
-    private static void setImageView(ImageView imageView, Bitmap bitmap) {
+    private void setImageView(ImageView imageView, Bitmap bitmap) {
         imageView.setImageBitmap(bitmap);
     }
 }

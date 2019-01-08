@@ -1,9 +1,16 @@
 package com.waracle.androidtest;
 
 import android.annotation.SuppressLint;
+import android.net.http.HttpResponseCache;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Handler;
+import android.os.Looper;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
+import androidx.fragment.app.ListFragment;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -78,13 +85,12 @@ public class MainActivity extends AppCompatActivity {
         private ListView mListView;
         private MyAdapter mAdapter;
 
-        public PlaceholderFragment() { /**/ }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            mListView = (ListView) rootView.findViewById(R.id.list);
+            mListView = rootView.findViewById(android.R.id.list);
             return rootView;
         }
 
@@ -96,13 +102,24 @@ public class MainActivity extends AppCompatActivity {
             mAdapter = new MyAdapter();
             mListView.setAdapter(mAdapter);
 
-            // Load data from net.
-            try {
-                JSONArray array = loadData();
-                mAdapter.setItems(array);
-            } catch (IOException | JSONException e) {
-                Log.e(TAG, e.getMessage());
-            }
+            AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+                    // Load data from net.
+                    try {
+                        final JSONArray array = loadData();
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAdapter.setItems(array);
+                            }
+                        });
+                    } catch (IOException | JSONException e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                }
+            });
+
         }
 
 
@@ -157,11 +174,11 @@ public class MainActivity extends AppCompatActivity {
             private JSONArray mItems;
             private ImageLoader mImageLoader;
 
-            public MyAdapter() {
+            private MyAdapter() {
                 this(new JSONArray());
             }
 
-            public MyAdapter(JSONArray items) {
+            private MyAdapter(JSONArray items) {
                 mItems = items;
                 mImageLoader = new ImageLoader();
             }
@@ -199,7 +216,8 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject object = (JSONObject) getItem(position);
                         title.setText(object.getString("title"));
                         desc.setText(object.getString("desc"));
-                        mImageLoader.load(object.getString("image"), image);
+                        ImageLoader imageLoader = new ImageLoader();
+                        imageLoader.load(object.getString("image"), image);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -210,7 +228,18 @@ public class MainActivity extends AppCompatActivity {
 
             public void setItems(JSONArray items) {
                 mItems = items;
+                notifyDataSetChanged();
             }
+        }
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        HttpResponseCache cache = HttpResponseCache.getInstalled();
+        if (cache != null) {
+            cache.flush();
         }
     }
 }
