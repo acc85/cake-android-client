@@ -25,7 +25,7 @@ import java.security.InvalidParameterException;
 public class ImageLoader {
 
     public ImageLoader() { /**/ }
-
+    DataSources.DataListeners dataListeners;
     /**
      * Simple function for loading a bitmap image from the web
      *
@@ -38,22 +38,18 @@ public class ImageLoader {
             throw new InvalidParameterException("URL is empty!");
         }
 
-        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+        dataListeners = new DataSources.DataListeners<Bitmap>() {
             @Override
-            public void run() {
-                MainApplication.getDataSource().addToMap(url,new ImageSources().setUrl(url),new DataSources.DataListeners<Bitmap>() {
+            public void onDataRetrieved(final Bitmap bitmap) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
-                    public void onDataRetrieved(final Bitmap bitmap) {
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                setImageView(imageView, bitmap);
-                            }
-                        });
+                    public void run() {
+                        setImageView(imageView, bitmap);
                     }
                 });
             }
-        });
+        };
+        MainApplication.getDataSource().addToMap(url, new ImageSources().setUrl(url),dataListeners );
 
     }
 

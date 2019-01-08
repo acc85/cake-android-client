@@ -1,6 +1,6 @@
 package com.waracle.androidtest.Model;
 
-public class MainModel {
+public class CakeModel {
 
     private String title;
     private String desc;

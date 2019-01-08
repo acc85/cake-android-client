@@ -1,6 +1,6 @@
 package com.waracle.androidtest.DataSource;
 
-import android.graphics.Bitmap;
+import android.os.AsyncTask;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,13 +22,21 @@ public class DataSourceManager {
     }
 
     @SuppressWarnings("unchecked")
-    public void addToMap(@NonNull String url, @NonNull DataSources dataSources, @NonNull DataSources.DataListeners imageSourceListener){
+    public void addToMap(@NonNull String url, @NonNull DataSources dataSource, @NonNull DataSources.DataListeners imageSourceListener) {
         DataSources storedDataSource = dataSourceConcurrentMap.get(url);
-        if(storedDataSource == null) {
-            dataSourceConcurrentMap.put(url, dataSources);
+        if (storedDataSource == null) {
+            dataSourceConcurrentMap.put(url, dataSource);
+        } else {
+            dataSource = storedDataSource;
         }
-        dataSources.getDataSourceListeners().add(new WeakReference<>(imageSourceListener));
-        dataSources.run();
+        dataSource.getDataSourceListeners().add(new WeakReference<>(imageSourceListener));
+        final DataSources finalDataSource = dataSource;
+        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+            @Override
+            public void run() {
+                finalDataSource.run();
+            }
+        });
     }
 
 
