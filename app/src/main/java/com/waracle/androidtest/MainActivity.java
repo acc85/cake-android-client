@@ -22,6 +22,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.waracle.androidtest.DataSource.CakeDataSources;
+import com.waracle.androidtest.DataSource.DataSourceManager;
+import com.waracle.androidtest.DataSource.DataSources;
+import com.waracle.androidtest.Model.MainModel;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,8 +40,7 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static String JSON_URL = "https://gist.githubusercontent.com/hart88/198f29ec5114a3ec3460/" +
-            "raw/8dd19a88f9b8d24c23d9960f3300d0c917a4f07c/cake.json";
+    private static String JSON_URL = "https://gist.githubusercontent.com/hart88/198f29ec5114a3ec3460/raw/8dd19a88f9b8d24c23d9960f3300d0c917a4f07c/cake.json";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,23 +106,34 @@ public class MainActivity extends AppCompatActivity {
             mAdapter = new MyAdapter();
             mListView.setAdapter(mAdapter);
 
-            AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+            MainApplication.getDataSource().addToMap(JSON_URL, new CakeDataSources(), new DataSources.DataListeners<MainModel>() {
                 @Override
-                public void run() {
-                    // Load data from net.
-                    try {
-                        final JSONArray array = loadData();
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                mAdapter.setItems(array);
-                            }
-                        });
-                    } catch (IOException | JSONException e) {
-                        Log.e(TAG, e.getMessage());
-                    }
+                public void onDataRetrieved(MainModel result) {
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+//                            mAdapter.setItems(array);
+                        }
+                    });
                 }
             });
+//            AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+//                @Override
+//                public void run() {
+//                    // Load data from net.
+//                    try {
+//                        final JSONArray array = loadData();
+//                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                mAdapter.setItems(array);
+//                            }
+//                        });
+//                    } catch (IOException | JSONException e) {
+//                        Log.e(TAG, e.getMessage());
+//                    }
+//                }
+//            });
 
         }
 

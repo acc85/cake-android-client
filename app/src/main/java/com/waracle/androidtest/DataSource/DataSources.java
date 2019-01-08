@@ -4,7 +4,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface DataSource<T> {
+public interface DataSources<T> {
 
     String getUrl();
 
@@ -14,7 +14,7 @@ public interface DataSource<T> {
 
     interface DataListeners<R>{
 
-        void onImageLoad(R result);
+        void onDataRetrieved(R result);
 
     }
 }

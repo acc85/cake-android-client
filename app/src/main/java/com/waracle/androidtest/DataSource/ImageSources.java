@@ -17,14 +17,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ImageSource implements DataSource<Bitmap> {
+public class ImageSources implements DataSources<Bitmap> {
 
     private boolean running;
     private long startTimeStamp;
     private String url;
     private byte[] byteData;
     private Bitmap bitmap;
-    private long timeStamp;
     private List<WeakReference<DataListeners<Bitmap>>> imageSourceListener = new ArrayList<>();
 
 
@@ -37,7 +36,7 @@ public class ImageSource implements DataSource<Bitmap> {
         return imageSourceListener;
     }
 
-    public ImageSource setUrl(String url) {
+    public ImageSources setUrl(String url) {
         this.url = url;
         return this;
     }
@@ -59,36 +58,31 @@ public class ImageSource implements DataSource<Bitmap> {
     }
 
     public long getTimeStamp() {
-        return timeStamp;
+        return startTimeStamp;
     }
-
-    public void setTimeStamp(long timeStamp) {
-        this.timeStamp = timeStamp;
-    }
-
 
     @Override
     public void run() {
         bitmap = MainApplication.getImageCache().getImageFromWarehouse(url);
-        if(MainApplication.getImageCache().getImageFromWarehouse(url) == null ||
-                startTimeStamp > MainApplication.getDataSource().getTimeToCache()+startTimeStamp){
-            timeStamp = System.currentTimeMillis();
+        if (MainApplication.getImageCache().getImageFromWarehouse(url) == null ||
+                startTimeStamp > MainApplication.getDataSource().getTimeToCache() + startTimeStamp) {
+            startTimeStamp = System.currentTimeMillis();
             byte[] bytedata = new byte[0];
             try {
                 bytedata = loadImageData(url);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(bytedata != null) {
+            if (bytedata != null) {
                 bitmap = convertToBitmap(bytedata);
             }
-            if(bitmap == null){
-                bitmap = ImageLoader.getBitmapFromVectorDrawable(MainApplication.getInstance(),R.drawable.ic_block_black_24dp);
+            if (bitmap == null) {
+                bitmap = ImageLoader.getBitmapFromVectorDrawable(MainApplication.getInstance(), R.drawable.ic_block_black_24dp);
             }
-            MainApplication.getImageCache().addImageToWarehouse(url,bitmap);
+            MainApplication.getImageCache().addImageToWarehouse(url, bitmap);
         }
-        for (Iterator<WeakReference<DataListeners<Bitmap>>> it = imageSourceListener.iterator(); it.hasNext() ;) {
-            it.next().get().onImageLoad(bitmap);
+        for (Iterator<WeakReference<DataListeners<Bitmap>>> it = imageSourceListener.iterator(); it.hasNext(); ) {
+            it.next().get().onDataRetrieved(bitmap);
             it.remove();
         }
     }
@@ -99,9 +93,9 @@ public class ImageSource implements DataSource<Bitmap> {
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) new URL(url).openConnection();
-            if(connection.getResponseCode() == 301){
+            if (connection.getResponseCode() == 301) {
                 loadImageData(connection.getHeaderField("Location"));
-            }else {
+            } else {
                 try {
                     // Read data from workstation
                     inputStream = connection.getInputStream();
@@ -113,12 +107,12 @@ public class ImageSource implements DataSource<Bitmap> {
                 // Can you think of a way to make the entire
                 // HTTP more efficient using HTTP headers??=
             }
-        }finally {
+        } finally {
             // Close the input stream if it exists.
             StreamUtils.close(inputStream);
 
             // Disconnect the connection
-            if(connection != null) {
+            if (connection != null) {
                 connection.disconnect();
             }
         }

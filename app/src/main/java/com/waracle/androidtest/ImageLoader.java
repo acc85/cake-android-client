@@ -5,18 +5,17 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
+
 import android.text.TextUtils;
 import android.widget.ImageView;
 
-import com.waracle.androidtest.DataSource.DataSource;
-import com.waracle.androidtest.DataSource.ImageSource;
+import com.waracle.androidtest.DataSource.DataSources;
+import com.waracle.androidtest.DataSource.ImageSources;
 
 import java.security.InvalidParameterException;
 
@@ -42,9 +41,9 @@ public class ImageLoader {
         AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
             @Override
             public void run() {
-                MainApplication.getDataSource().addToMap(url,new ImageSource().setUrl(url),new DataSource.DataListeners<Bitmap>() {
+                MainApplication.getDataSource().addToMap(url,new ImageSources().setUrl(url),new DataSources.DataListeners<Bitmap>() {
                     @Override
-                    public void onImageLoad(final Bitmap bitmap) {
+                    public void onDataRetrieved(final Bitmap bitmap) {
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
