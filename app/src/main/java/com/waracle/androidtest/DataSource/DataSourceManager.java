@@ -2,9 +2,12 @@ package com.waracle.androidtest.DataSource;
 
 import android.os.AsyncTask;
 
+import com.waracle.androidtest.MainApplication;
+
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
 
 import androidx.annotation.NonNull;
 
@@ -19,6 +22,15 @@ public class DataSourceManager {
 
     public static void setTimeToCache(long timeToCache) {
         DataSourceManager.timeToCache = timeToCache;
+    }
+
+    public DataSources getDataSource(String key){
+        return dataSourceConcurrentMap.get(key);
+    }
+
+    public void clearDataSources(){
+        dataSourceConcurrentMap.clear();
+        MainApplication.getImageCache().clearCache();
     }
 
     @SuppressWarnings("unchecked")

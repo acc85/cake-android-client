@@ -2,23 +2,16 @@ package com.waracle.androidtest;
 
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.waracle.androidtest.DataSource.DataSources;
 import com.waracle.androidtest.Fragments.PlaceholderFragment;
-import com.waracle.androidtest.Model.CakeModel;
 
-import java.util.List;
+import androidx.appcompat.app.AppCompatActivity;
 
 
 public class MainActivity extends AppCompatActivity {
 
-
-    private DataSources.DataListeners<List<CakeModel>> dataListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new PlaceholderFragment(), PlaceholderFragment.TAG)
                     .commit();
         }
     }
@@ -47,19 +40,14 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
+            PlaceholderFragment placeholderFragment = ((PlaceholderFragment) getSupportFragmentManager().findFragmentByTag(PlaceholderFragment.TAG));
+            if(placeholderFragment != null){
+                placeholderFragment.refreshList();
+            }
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        HttpResponseCache cache = HttpResponseCache.getInstalled();
-        if (cache != null) {
-            cache.flush();
-        }
-    }
 }

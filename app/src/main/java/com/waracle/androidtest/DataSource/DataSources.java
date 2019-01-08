@@ -8,6 +8,8 @@ public interface DataSources<T> {
 
     String getUrl();
 
+    void clear();
+
     List<WeakReference<DataListeners<T>>> getDataSourceListeners();
 
     void run();

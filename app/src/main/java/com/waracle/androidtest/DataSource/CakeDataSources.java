@@ -18,6 +18,8 @@ import java.util.List;
 
 public class CakeDataSources implements DataSources<List<CakeModel>> {
 
+    private long startTimeStamp = 0L;
+
     private List<CakeModel> cakeModels = new ArrayList<>();
 
     private List<WeakReference<DataListeners<List<CakeModel>>>> dataListeners = new ArrayList<>();
@@ -28,49 +30,57 @@ public class CakeDataSources implements DataSources<List<CakeModel>> {
     }
 
     @Override
+    public void clear() {
+        cakeModels.clear();
+    }
+
+    @Override
     public List<WeakReference<DataListeners<List<CakeModel>>>> getDataSourceListeners() {
         return dataListeners;
     }
 
     @Override
     public void run() {
-        InputStream inputStream = null;
-        HttpURLConnection.setFollowRedirects(true);
-        HttpURLConnection connection = null;
-        try {
-            connection = (HttpURLConnection) new URL(getUrl()).openConnection();
+        if(cakeModels.isEmpty() || startTimeStamp > System.currentTimeMillis()+startTimeStamp) {
+            startTimeStamp = System.currentTimeMillis();
+            InputStream inputStream = null;
+            HttpURLConnection.setFollowRedirects(true);
+            HttpURLConnection connection = null;
             try {
-                // Read data from workstation
-                inputStream = connection.getInputStream();
-            } catch (IOException e) {
-                // Read the error from the workstation
-                inputStream = connection.getErrorStream();
-            }
-            byte[] bytes = StreamUtils.readUnknownFully(inputStream);
-            // Read in charset of HTTP content.
-            String charset = parseCharset(connection.getRequestProperty("Content-Type"));
+                connection = (HttpURLConnection) new URL(getUrl()).openConnection();
+                try {
+                    // Read data from workstation
+                    inputStream = connection.getInputStream();
+                } catch (IOException e) {
+                    // Read the error from the workstation
+                    inputStream = connection.getErrorStream();
+                }
+                byte[] bytes = StreamUtils.readUnknownFully(inputStream);
+                // Read in charset of HTTP content.
+                String charset = parseCharset(connection.getRequestProperty("Content-Type"));
 
-            // Convert byte array to appropriate encoded string.
-            String jsonText = new String(bytes, charset);
-            JSONArray jsonArray = new JSONArray(jsonText);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonElement = jsonArray.getJSONObject(i);
-                CakeModel cakeModel = new CakeModel();
-                cakeModel.setTitle(jsonElement.getString("title"));
-                cakeModel.setDesc(jsonElement.getString("desc"));
-                cakeModel.setImageUrl(jsonElement.getString("image"));
-                cakeModels.add(cakeModel);
-            }
-            // Can you think of a way to make the entire
-            // HTTP more efficient using HTTP headers??=
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        } finally {
-            // Close the input stream if it exists.
-            StreamUtils.close(inputStream);
-            // Disconnect the connection
-            if (connection != null) {
-                connection.disconnect();
+                // Convert byte array to appropriate encoded string.
+                String jsonText = new String(bytes, charset);
+                JSONArray jsonArray = new JSONArray(jsonText);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonElement = jsonArray.getJSONObject(i);
+                    CakeModel cakeModel = new CakeModel();
+                    cakeModel.setTitle(jsonElement.getString("title"));
+                    cakeModel.setDesc(jsonElement.getString("desc"));
+                    cakeModel.setImageUrl(jsonElement.getString("image"));
+                    cakeModels.add(cakeModel);
+                }
+                // Can you think of a way to make the entire
+                // HTTP more efficient using HTTP headers??=
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            } finally {
+                // Close the input stream if it exists.
+                StreamUtils.close(inputStream);
+                // Disconnect the connection
+                if (connection != null) {
+                    connection.disconnect();
+                }
             }
         }
 

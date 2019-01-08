@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import com.waracle.androidtest.ImageLoader;
 import com.waracle.androidtest.MainApplication;
 import com.waracle.androidtest.R;
+import com.waracle.androidtest.Storage.ImageCache;
 import com.waracle.androidtest.StreamUtils;
 
 import java.io.IOException;
@@ -29,6 +30,11 @@ public class ImageSources implements DataSources<Bitmap> {
 
     public String getUrl() {
         return url;
+    }
+
+    @Override
+    public void clear() {
+        startTimeStamp = 0;
     }
 
     @Override
