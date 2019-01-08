@@ -83,17 +83,13 @@ public class ImageSources implements DataSources<Bitmap> {
         }
 
         Iterator<WeakReference<DataListeners<Bitmap>>> it = imageSourceListener.iterator();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             WeakReference<DataListeners<Bitmap>> dataListeners = it.next();
-             if(dataListeners.get() != null) {
-                 dataListeners.get().onDataRetrieved(bitmap);
+            if (dataListeners.get() != null) {
+                dataListeners.get().onDataRetrieved(bitmap);
             }
             it.remove();
         }
-//        for (Iterator<WeakReference<DataListeners<Bitmap>>> it = imageSourceListener.iterator(); it.hasNext(); ) {
-//            it.next().get().onDataRetrieved(bitmap);
-//            it.remove();
-//        }
     }
 
     private byte[] loadImageData(String url) throws IOException {
