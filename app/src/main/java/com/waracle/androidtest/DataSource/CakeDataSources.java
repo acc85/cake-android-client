@@ -30,11 +30,6 @@ public class CakeDataSources implements DataSources<List<CakeModel>> {
     }
 
     @Override
-    public void clear() {
-        cakeModels.clear();
-    }
-
-    @Override
     public List<WeakReference<DataListeners<List<CakeModel>>>> getDataSourceListeners() {
         return dataListeners;
     }

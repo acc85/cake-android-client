@@ -20,17 +20,9 @@ public class DataSourceManager {
         return timeToCache;
     }
 
-    public static void setTimeToCache(long timeToCache) {
-        DataSourceManager.timeToCache = timeToCache;
-    }
-
-    public DataSources getDataSource(String key){
-        return dataSourceConcurrentMap.get(key);
-    }
 
     public void clearDataSources(){
         dataSourceConcurrentMap.clear();
-        MainApplication.getImageCache().clearCache();
     }
 
     @SuppressWarnings("unchecked")

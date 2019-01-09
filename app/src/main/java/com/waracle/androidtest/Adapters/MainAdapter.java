@@ -22,6 +22,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainRecyclerVi
 
     public void setItems(List<CakeModel> cakeModels){
         this.cakeModels = cakeModels;
+        notifyDataSetChanged();
+    }
+
+    public void clear(){
+        notifyItemRangeRemoved(0, this.cakeModels.size());
+        this.cakeModels.clear();
     }
 
     @NonNull
@@ -35,8 +41,22 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainRecyclerVi
     public void onBindViewHolder(@NonNull MainRecyclerViewHolder holder, int position) {
         holder.title.setText(cakeModels.get(position).getTitle());
         holder.desc.setText((cakeModels.get(position).getDesc()));
+        holder.image.setImageBitmap(null);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         ImageLoader imageLoader = new ImageLoader();
+        holder.image.setTag(R.id.loader,imageLoader);
         imageLoader.load(cakeModels.get(position).getImageUrl(), holder.image);
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull MainRecyclerViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        holder.image.setTag(R.id.loader,null);
     }
 
     @Override

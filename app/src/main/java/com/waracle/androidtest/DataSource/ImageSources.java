@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import com.waracle.androidtest.ImageLoader;
 import com.waracle.androidtest.MainApplication;
 import com.waracle.androidtest.R;
-import com.waracle.androidtest.Storage.ImageCache;
 import com.waracle.androidtest.StreamUtils;
 
 import java.io.IOException;
@@ -30,11 +29,6 @@ public class ImageSources implements DataSources<Bitmap> {
 
     public String getUrl() {
         return url;
-    }
-
-    @Override
-    public void clear() {
-        startTimeStamp = 0;
     }
 
     @Override
@@ -69,8 +63,7 @@ public class ImageSources implements DataSources<Bitmap> {
 
     @Override
     public void run() {
-        bitmap = MainApplication.getImageCache().getImageFromWarehouse(url);
-        if (MainApplication.getImageCache().getImageFromWarehouse(url) == null ||
+        if (bitmap == null ||
                 startTimeStamp > MainApplication.getDataSource().getTimeToCache() + startTimeStamp) {
             startTimeStamp = System.currentTimeMillis();
             byte[] bytedata = new byte[0];
@@ -85,7 +78,6 @@ public class ImageSources implements DataSources<Bitmap> {
             if (bitmap == null) {
                 bitmap = ImageLoader.getBitmapFromVectorDrawable(MainApplication.getInstance(), R.drawable.ic_block_black_24dp);
             }
-            MainApplication.getImageCache().addImageToWarehouse(url, bitmap);
         }
 
         Iterator<WeakReference<DataListeners<Bitmap>>> it = imageSourceListener.iterator();

@@ -4,13 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
 import android.text.TextUtils;
 import android.widget.ImageView;
 
@@ -19,13 +14,18 @@ import com.waracle.androidtest.DataSource.ImageSources;
 
 import java.security.InvalidParameterException;
 
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
 /**
  * Created by Riad on 20/05/2015.
  */
 public class ImageLoader {
 
     public ImageLoader() { /**/ }
+
     DataSources.DataListeners dataListeners;
+
     /**
      * Simple function for loading a bitmap image from the web
      *
@@ -45,11 +45,12 @@ public class ImageLoader {
                     @Override
                     public void run() {
                         setImageView(imageView, bitmap);
+                        imageView.setTag(R.id.loader);
                     }
                 });
             }
         };
-        MainApplication.getDataSource().addToMap(url, new ImageSources().setUrl(url),dataListeners );
+        MainApplication.getDataSource().addToMap(url, new ImageSources().setUrl(url), dataListeners);
 
     }
 
