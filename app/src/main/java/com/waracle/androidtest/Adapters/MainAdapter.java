@@ -9,16 +9,25 @@ import android.widget.TextView;
 import com.waracle.androidtest.ImageLoader;
 import com.waracle.androidtest.Model.CakeModel;
 import com.waracle.androidtest.R;
+import com.waracle.androidtest.viewModels.CakeViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainRecyclerViewHolder> {
 
     private List<CakeModel> cakeModels = new ArrayList<>();
+
+    private CakeViewModel cakeViewModel;
+
+    public void setCakeViewModel(CakeViewModel cakeViewModel){
+        this.cakeViewModel = cakeViewModel;
+    }
 
     public void setItems(List<CakeModel> cakeModels){
         this.cakeModels = cakeModels;
@@ -34,7 +43,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainRecyclerVi
     @Override
     public MainRecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_layout,parent,false);
-        return new MainRecyclerViewHolder(view);
+        ViewDataBinding viewDataBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),R.layout.list_item_layout,parent,false);
+        return new MainRecyclerViewHolder(viewDataBinding.getRoot());
     }
 
     @Override

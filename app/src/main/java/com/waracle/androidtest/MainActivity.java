@@ -1,21 +1,21 @@
 package com.waracle.androidtest;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.waracle.androidtest.Adapters.MainAdapter;
-import com.waracle.androidtest.DataSource.CakeDataSources;
 import com.waracle.androidtest.DataSource.DataSources;
 import com.waracle.androidtest.Model.CakeModel;
+import com.waracle.androidtest.databinding.ActivityMainBinding;
+import com.waracle.androidtest.viewModels.CakeViewModel;
 
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -25,38 +25,24 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressWarnings("FieldCanBeLocal")
     private DataSources.DataListeners<List<CakeModel>> dataListener;
-    private MainAdapter mainAdapter;
+    private CakeViewModel cakeViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        recyclerView = findViewById(R.id.cake_list);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        ((LinearLayoutManager) layoutManager).setOrientation(RecyclerView.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-        mainAdapter = new MainAdapter();
-        recyclerView.setAdapter(mainAdapter);
-        getData();
-    }
-
-    private void getData() {
-        dataListener = new DataSources.DataListeners<List<CakeModel>>() {
+        cakeViewModel = ViewModelProviders.of(this).get(CakeViewModel.class);
+        cakeViewModel.getCakeModels().observe(this, new Observer<List<CakeModel>>() {
             @Override
-            public void onDataRetrieved(final List<CakeModel> result) {
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mainAdapter.setItems(result);
-                    }
-                });
+            public void onChanged(List<CakeModel> cakeModels) {
+                ((MainAdapter) recyclerView.getAdapter()).setItems(cakeModels);
             }
-        };
+        });
 
-        String JSON_URL = "https://gist.githubusercontent.com/hart88/198f29ec5114a3ec3460/raw/8dd19a88f9b8d24c23d9960f3300d0c917a4f07c/cake.json";
-        MainApplication.getDataSource().addToMap(JSON_URL, new CakeDataSources(), dataListener);
+        ActivityMainBinding activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        activityMainBinding.setCakeViewModel(cakeViewModel);
+        recyclerView = findViewById(R.id.cake_list);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,9 +52,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void refreshList() {
-        mainAdapter.clear();
+        ((MainAdapter) recyclerView.getAdapter()).clear();
         MainApplication.getDataSource().clearDataSources();
-        getData();
+        cakeViewModel.fetchCakeModels();
     }
 
     @Override
@@ -81,10 +67,6 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             refreshList();
-//            PlaceholderFragment placeholderFragment = ((PlaceholderFragment) getSupportFragmentManager().findFragmentByTag(PlaceholderFragment.TAG));
-//            if(placeholderFragment != null){
-//                placeholderFragment.refreshList();
-//            }
             return true;
         }
 

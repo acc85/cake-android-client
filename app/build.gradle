@@ -30,14 +30,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    dataBinding{
-        enabled = true
-    }
+    dataBinding.enabled = true
 
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
