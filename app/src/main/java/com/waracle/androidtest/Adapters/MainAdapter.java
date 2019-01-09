@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainRecyclerViewHolder> {
 
-    List<CakeModel> cakeModels = new ArrayList<>();
+    private List<CakeModel> cakeModels = new ArrayList<>();
 
     public void setItems(List<CakeModel> cakeModels){
         this.cakeModels = cakeModels;
@@ -49,14 +49,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainRecyclerVi
             }
         });
         ImageLoader imageLoader = new ImageLoader();
-        holder.image.setTag(R.id.loader,imageLoader);
+        holder.image.setTag(imageLoader);
         imageLoader.load(cakeModels.get(position).getImageUrl(), holder.image);
     }
 
     @Override
     public void onViewDetachedFromWindow(@NonNull MainRecyclerViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
-        holder.image.setTag(R.id.loader,null);
     }
 
     @Override
@@ -69,7 +68,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainRecyclerVi
         TextView title;
         TextView desc;
         ImageView image;
-        public MainRecyclerViewHolder(@NonNull View itemView) {
+        MainRecyclerViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.title);
             desc = itemView.findViewById(R.id.desc);

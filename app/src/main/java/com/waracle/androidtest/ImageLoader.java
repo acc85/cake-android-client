@@ -24,7 +24,7 @@ public class ImageLoader {
 
     public ImageLoader() { /**/ }
 
-    DataSources.DataListeners dataListeners;
+    DataSources.DataListeners dataListener;
 
     /**
      * Simple function for loading a bitmap image from the web
@@ -38,19 +38,19 @@ public class ImageLoader {
             throw new InvalidParameterException("URL is empty!");
         }
 
-        dataListeners = new DataSources.DataListeners<Bitmap>() {
+        dataListener = new DataSources.DataListeners<Bitmap>() {
             @Override
             public void onDataRetrieved(final Bitmap bitmap) {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
                         setImageView(imageView, bitmap);
-                        imageView.setTag(R.id.loader);
+                        imageView.setTag(null);
                     }
                 });
             }
         };
-        MainApplication.getDataSource().addToMap(url, new ImageSources().setUrl(url), dataListeners);
+        MainApplication.getDataSource().addToMap(url, new ImageSources().setUrl(url), dataListener);
 
     }
 

@@ -64,7 +64,7 @@ public class ImageSources implements DataSources<Bitmap> {
     @Override
     public void run() {
         if (bitmap == null ||
-                startTimeStamp > MainApplication.getDataSource().getTimeToCache() + startTimeStamp) {
+                getTimeStamp() > MainApplication.getDataSource().getTimeToCache() + getTimeStamp()) {
             startTimeStamp = System.currentTimeMillis();
             byte[] bytedata = new byte[0];
             try {
