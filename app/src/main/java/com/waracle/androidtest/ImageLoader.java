@@ -22,8 +22,6 @@ import androidx.core.content.ContextCompat;
  */
 public class ImageLoader {
 
-    public ImageLoader() { /**/ }
-
     @SuppressWarnings("FieldCanBeLocal")
     private DataSources.DataListeners dataListener;
 
