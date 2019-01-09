@@ -24,7 +24,8 @@ public class ImageLoader {
 
     public ImageLoader() { /**/ }
 
-    DataSources.DataListeners dataListener;
+    @SuppressWarnings("FieldCanBeLocal")
+    private DataSources.DataListeners dataListener;
 
     /**
      * Simple function for loading a bitmap image from the web

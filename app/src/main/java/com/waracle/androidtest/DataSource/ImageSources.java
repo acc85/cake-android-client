@@ -19,7 +19,6 @@ import java.util.List;
 
 public class ImageSources implements DataSources<Bitmap> {
 
-    private boolean running;
     private long startTimeStamp;
     private String url;
     private byte[] byteData;
@@ -41,23 +40,7 @@ public class ImageSources implements DataSources<Bitmap> {
         return this;
     }
 
-    public boolean isRunning() {
-        return running;
-    }
-
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
-
-    public Bitmap getBitmap() {
-        return bitmap;
-    }
-
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
-    }
-
-    public long getTimeStamp() {
+    private long getTimeStamp() {
         return startTimeStamp;
     }
 
