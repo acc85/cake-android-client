@@ -23,8 +23,6 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
 
-    @SuppressWarnings("FieldCanBeLocal")
-    private DataSources.DataListeners<List<CakeModel>> dataListener;
     private CakeViewModel cakeViewModel;
 
     @Override
@@ -54,7 +52,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void refreshList() {
-        ((MainAdapter) recyclerView.getAdapter()).clear();
+        if(recyclerView.getAdapter() != null) {
+            ((MainAdapter) recyclerView.getAdapter()).clear();
+        }
         MainApplication.getDataSource().clearDataSources();
         cakeViewModel.fetchCakeModels();
     }
