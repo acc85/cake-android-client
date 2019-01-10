@@ -13,11 +13,7 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ImageSources implements DataSources<Bitmap> {
 
@@ -68,7 +64,7 @@ public class ImageSources implements DataSources<Bitmap> {
         }
 
 
-        while(imageSourceListener.peek() != null){
+        while (imageSourceListener.peek() != null) {
             WeakReference<DataListeners<Bitmap>> dataListener = imageSourceListener.poll();
             if (dataListener != null && dataListener.get() != null) {
                 dataListener.get().onDataRetrieved(bitmap);

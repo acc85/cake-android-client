@@ -13,7 +13,6 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -37,7 +36,7 @@ public class CakeDataSources implements DataSources<List<CakeModel>> {
 
     @Override
     public void run() {
-        if(cakeModels.isEmpty() || startTimeStamp > System.currentTimeMillis()+startTimeStamp) {
+        if (cakeModels.isEmpty() || startTimeStamp > System.currentTimeMillis() + startTimeStamp) {
             startTimeStamp = System.currentTimeMillis();
             InputStream inputStream = null;
             HttpURLConnection.setFollowRedirects(true);
@@ -79,7 +78,7 @@ public class CakeDataSources implements DataSources<List<CakeModel>> {
                 }
             }
         }
-        while(dataListeners.peek() != null){
+        while (dataListeners.peek() != null) {
             WeakReference<DataListeners<List<CakeModel>>> dataListener = dataListeners.poll();
             if (dataListener != null && dataListener.get() != null) {
                 dataListener.get().onDataRetrieved(cakeModels);
