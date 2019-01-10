@@ -79,12 +79,12 @@ public class CakeDataSources implements DataSources<List<CakeModel>> {
                 }
             }
         }
-
-        for(WeakReference<DataListeners<List<CakeModel>>> dataListener: dataListeners){
-            if (dataListener.get() != null) {
+        while(dataListeners.peek() != null){
+            WeakReference<DataListeners<List<CakeModel>>> dataListener = dataListeners.poll();
+            if (dataListener != null && dataListener.get() != null) {
                 dataListener.get().onDataRetrieved(cakeModels);
             }
-            dataListeners.remove(dataListener);
+
         }
 
     }
