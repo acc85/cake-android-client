@@ -68,7 +68,6 @@ public class ImageSources implements DataSources<Bitmap> {
             WeakReference<DataListeners<Bitmap>> dataListener = imageSourceListener.poll();
             if (dataListener != null && dataListener.get() != null) {
                 dataListener.get().onDataRetrieved(bitmap);
-                System.out.println(imageSourceListener.size());
             }
 
         }
