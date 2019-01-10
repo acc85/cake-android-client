@@ -34,7 +34,7 @@ class MainActivity: AppCompatActivity() {
         return true
     }
 
-    fun refreshList(){
+    private fun refreshList(){
         (cake_list.adapter as MainAdapter).clear()
         cakeViewModel.fetchCakeModels()
     }

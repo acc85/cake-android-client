@@ -14,7 +14,7 @@ import java.security.InvalidParameterException
 
 class ImageLoader{
 
-    lateinit var dataListener: DataSources.DataListeners<Any>
+    private lateinit var dataListener: DataSources.DataListeners<Any>
 
     fun load(url: String, imageView: ImageView) {
 
