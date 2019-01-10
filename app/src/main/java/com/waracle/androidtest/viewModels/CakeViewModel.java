@@ -18,7 +18,7 @@ public class CakeViewModel extends ViewModel {
     @SuppressWarnings("FieldCanBeLocal")
     private DataSources.DataListeners<List<CakeModel>> dataListener;
 
-    MutableLiveData<List<CakeModel>> cakeModels = new MutableLiveData<>();
+    private MutableLiveData<List<CakeModel>> cakeModels = new MutableLiveData<>();
 
     public MutableLiveData<List<CakeModel>> getCakeModels(){
         return cakeModels;
@@ -39,6 +39,10 @@ public class CakeViewModel extends ViewModel {
 
         String JSON_URL = "https://gist.githubusercontent.com/hart88/198f29ec5114a3ec3460/raw/8dd19a88f9b8d24c23d9960f3300d0c917a4f07c/cake.json";
         MainApplication.getDataSource().addToMap(JSON_URL, new CakeDataSources(), dataListener);
+    }
+
+    public CakeModel getCakeModelByIndex(int index){
+        return cakeModels.getValue().get(index);
     }
 
 }

@@ -34,7 +34,9 @@ public class MainActivity extends AppCompatActivity {
         cakeViewModel.getCakeModels().observe(this, new Observer<List<CakeModel>>() {
             @Override
             public void onChanged(List<CakeModel> cakeModels) {
-                ((MainAdapter) recyclerView.getAdapter()).setItems(cakeModels);
+                if(recyclerView.getAdapter() != null) {
+                    ((MainAdapter) recyclerView.getAdapter()).setItems(cakeModels);
+                }
             }
         });
 
