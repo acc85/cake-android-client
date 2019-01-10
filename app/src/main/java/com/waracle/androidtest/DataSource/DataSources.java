@@ -3,12 +3,13 @@ package com.waracle.androidtest.DataSource;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public interface DataSources<T> {
 
     String getUrl();
 
-    List<WeakReference<DataListeners<T>>> getDataSourceListeners();
+    ConcurrentLinkedQueue<WeakReference<DataListeners<T>>> getDataSourceListeners();
 
     void run();
 

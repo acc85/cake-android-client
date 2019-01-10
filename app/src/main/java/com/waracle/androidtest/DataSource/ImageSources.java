@@ -16,6 +16,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ImageSources implements DataSources<Bitmap> {
 
@@ -23,7 +25,9 @@ public class ImageSources implements DataSources<Bitmap> {
     private String url;
     private byte[] byteData;
     private Bitmap bitmap;
-    private List<WeakReference<DataListeners<Bitmap>>> imageSourceListener = new ArrayList<>();
+    private ConcurrentLinkedQueue<WeakReference<DataListeners<Bitmap>>> imageSourceListener = new ConcurrentLinkedQueue<>();
+
+//    private CopyOnWriteArrayList<WeakReference<DataListeners<Bitmap>>> imageSourceListener = new CopyOnWriteArrayList<>();
 
 
     public String getUrl() {
@@ -31,7 +35,7 @@ public class ImageSources implements DataSources<Bitmap> {
     }
 
     @Override
-    public List<WeakReference<DataListeners<Bitmap>>> getDataSourceListeners() {
+    public ConcurrentLinkedQueue<WeakReference<DataListeners<Bitmap>>> getDataSourceListeners() {
         return imageSourceListener;
     }
 
@@ -63,13 +67,11 @@ public class ImageSources implements DataSources<Bitmap> {
             }
         }
 
-        Iterator<WeakReference<DataListeners<Bitmap>>> it = imageSourceListener.iterator();
-        while (it.hasNext()) {
-            WeakReference<DataListeners<Bitmap>> dataListeners = it.next();
-            if (dataListeners.get() != null) {
-                dataListeners.get().onDataRetrieved(bitmap);
+        for(WeakReference<DataListeners<Bitmap>> dataListener: imageSourceListener){
+            if (dataListener.get() != null) {
+                dataListener.get().onDataRetrieved(bitmap);
             }
-            it.remove();
+            imageSourceListener.remove(dataListener);
         }
     }
 

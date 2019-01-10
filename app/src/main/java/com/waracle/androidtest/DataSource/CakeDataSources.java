@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class CakeDataSources implements DataSources<List<CakeModel>> {
 
@@ -22,7 +23,7 @@ public class CakeDataSources implements DataSources<List<CakeModel>> {
 
     private List<CakeModel> cakeModels = new ArrayList<>();
 
-    private List<WeakReference<DataListeners<List<CakeModel>>>> dataListeners = new ArrayList<>();
+    private ConcurrentLinkedQueue<WeakReference<DataListeners<List<CakeModel>>>> dataListeners = new ConcurrentLinkedQueue<>();
 
     @Override
     public String getUrl() {
@@ -30,7 +31,7 @@ public class CakeDataSources implements DataSources<List<CakeModel>> {
     }
 
     @Override
-    public List<WeakReference<DataListeners<List<CakeModel>>>> getDataSourceListeners() {
+    public ConcurrentLinkedQueue<WeakReference<DataListeners<List<CakeModel>>>> getDataSourceListeners() {
         return dataListeners;
     }
 
@@ -79,14 +80,13 @@ public class CakeDataSources implements DataSources<List<CakeModel>> {
             }
         }
 
-        Iterator<WeakReference<DataListeners<List<CakeModel>>>> it = dataListeners.iterator();
-        while(it.hasNext()){
-            WeakReference<DataListeners<List<CakeModel>>> dataListeners = it.next();
-            if(dataListeners.get() != null) {
-                dataListeners.get().onDataRetrieved(cakeModels);
+        for(WeakReference<DataListeners<List<CakeModel>>> dataListener: dataListeners){
+            if (dataListener.get() != null) {
+                dataListener.get().onDataRetrieved(cakeModels);
             }
-            it.remove();
+            dataListeners.remove(dataListener);
         }
+
     }
 
     /**
