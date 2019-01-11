@@ -30,24 +30,29 @@ class CakeDataSources : DataSources {
             val connection = URL(getUrl()).openConnection() as HttpURLConnection
             connection.connect()
             val charset: String? = parseCharset(connection.getRequestProperty("Content-Type"))
-            connection.inputStream.bufferedReader(
-                    charset(charset?:"UTF-8")
-            ).use { reader ->
+            try {
+                connection.inputStream.bufferedReader(
+                        charset(charset ?: "UTF-8")
+                ).use { reader ->
                     val jsonText: String = reader.readText()
                     val jsonArray = JSONArray(jsonText)
-                    (0..(jsonArray.length()-1)).forEach {
+                    (0..(jsonArray.length() - 1)).forEach {
                         val jsonElement = jsonArray.getJSONObject(it)
                         val cakeModel = CakeModel(
                                 jsonElement.getString("title"),
                                 jsonElement.getString("desc"),
                                 jsonElement.getString("image"))
                         cakeModels.add(cakeModel)
+                    }
                 }
+            } finally {
+                connection.disconnect()
+
             }
         }
 
         while (dataListeners.peek() != null) {
-            val dataListener : WeakReference<DataSources.DataListeners<Any>> = dataListeners.poll()
+            val dataListener: WeakReference<DataSources.DataListeners<Any>> = dataListeners.poll()
             if (dataListener.get() != null) {
                 dataListener.get()?.onDataRetrieved(cakeModels)
             }
