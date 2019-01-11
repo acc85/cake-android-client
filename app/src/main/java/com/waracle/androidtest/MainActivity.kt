@@ -22,9 +22,7 @@ class MainActivity: AppCompatActivity() {
         cakeViewModel = ViewModelProviders.of(this).get(CakeViewModel::class.java)
         val activityMainBinding:ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         cakeViewModel.cakeModels.observe(this, Observer<MutableList<CakeModel>> {
-            if(cake_list.adapter != null) {
-                (cake_list.adapter as MainAdapter).setItems(it)
-            }
+            (cake_list.adapter as? MainAdapter)?.setItems(it)
         })
         activityMainBinding.cakeViewModel = cakeViewModel
     }
@@ -35,7 +33,7 @@ class MainActivity: AppCompatActivity() {
     }
 
     private fun refreshList(){
-        (cake_list.adapter as MainAdapter).clear()
+        (cake_list.adapter as? MainAdapter)?.clear()
         cakeViewModel.fetchCakeModels()
     }
 
