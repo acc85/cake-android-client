@@ -49,14 +49,14 @@ public class ImageSources implements DataSources<Bitmap> {
         if (bitmap == null ||
                 getTimeStamp() > MainApplication.getDataSource().getTimeToCache() + getTimeStamp()) {
             startTimeStamp = System.currentTimeMillis();
-            byte[] bytedata = new byte[0];
+            byte[] byteData = new byte[0];
             try {
-                bytedata = loadImageData(url);
+                byteData = loadImageData(url);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (bytedata != null) {
-                bitmap = convertToBitmap(bytedata);
+            if (byteData != null) {
+                bitmap = convertToBitmap(byteData);
             }
             if (bitmap == null) {
                 bitmap = ImageLoader.getBitmapFromVectorDrawable(MainApplication.getInstance(), R.drawable.ic_block_black_24dp);

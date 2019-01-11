@@ -42,7 +42,10 @@ public class CakeViewModel extends ViewModel {
     }
 
     public CakeModel getCakeModelByIndex(int index){
-        return cakeModels.getValue().get(index);
+        if(cakeModels.getValue() != null) {
+            return cakeModels.getValue().get(index);
+        }
+        return new CakeModel();
     }
 
 }

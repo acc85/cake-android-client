@@ -2,26 +2,24 @@ package com.waracle.androidtest.DataSource;
 
 import android.os.AsyncTask;
 
-import com.waracle.androidtest.MainApplication;
-
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 
 import androidx.annotation.NonNull;
 
 public class DataSourceManager {
 
-    private static long timeToCache = 1000000L;
+    @SuppressWarnings("FieldCanBeLocal")
+    private long timeToCache = 1000000L;
     private ConcurrentMap<String, DataSources> dataSourceConcurrentMap = new ConcurrentHashMap<>();
 
-    public long getTimeToCache() {
+    long getTimeToCache() {
         return timeToCache;
     }
 
 
-    public void clearDataSources(){
+    public void clearDataSources() {
         dataSourceConcurrentMap.clear();
     }
 

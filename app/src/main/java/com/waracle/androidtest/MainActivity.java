@@ -5,7 +5,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.waracle.androidtest.Adapters.MainAdapter;
-import com.waracle.androidtest.DataSource.DataSources;
 import com.waracle.androidtest.Model.CakeModel;
 import com.waracle.androidtest.databinding.ActivityMainBinding;
 import com.waracle.androidtest.viewModels.CakeViewModel;
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         cakeViewModel.getCakeModels().observe(this, new Observer<List<CakeModel>>() {
             @Override
             public void onChanged(List<CakeModel> cakeModels) {
-                if(recyclerView.getAdapter() != null) {
+                if (recyclerView.getAdapter() != null) {
                     ((MainAdapter) recyclerView.getAdapter()).setItems(cakeModels);
                 }
             }
@@ -52,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void refreshList() {
-        if(recyclerView.getAdapter() != null) {
+        if (recyclerView.getAdapter() != null) {
             ((MainAdapter) recyclerView.getAdapter()).clear();
         }
         MainApplication.getDataSource().clearDataSources();

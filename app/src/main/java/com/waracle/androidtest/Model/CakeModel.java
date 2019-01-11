@@ -2,9 +2,9 @@ package com.waracle.androidtest.Model;
 
 public class CakeModel {
 
-    private String title;
-    private String desc;
-    private String imageUrl;
+    private String title = "";
+    private String desc = "";
+    private String imageUrl = "";
 
     public String getTitle() {
         return title;
